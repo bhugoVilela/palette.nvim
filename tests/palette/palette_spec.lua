@@ -74,14 +74,11 @@ describe(":Palette export", function()
 	end)
 
 	it("should be able to apply the colorscheme after exporting", function()
-		vim.g.palette_theme_export_path = './colors'
 		vim.cmd "Palette export test_theme"
 
 		vim.cmd "colorscheme test_theme"
 
 		assert.equals(vim.g.colors_name, "test_theme")
-
-		vim.fn.system("rm -rf ./colors")
 	end)
 end)
 

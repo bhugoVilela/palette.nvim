@@ -164,11 +164,6 @@ local function create_color_dir()
   local uv = vim.loop
   local path = getPluginConfig().export_path
   local _, err, msg = uv.fs_mkdir(path, 511)
-  if err then
-    print('trying '..path)
-    print(err..' '..msg)
-    error(msg)
-  end
 end
 
 --- exports the current palette buffer into a colorscheme
