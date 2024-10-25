@@ -35,9 +35,9 @@ jobs:
             mkdir -p _neovim
             curl -sL "https://github.com/neovim/neovim/releases/download/${{ matrix.rev }}" | tar xzf - --strip-components=1 -C "${PWD}/_neovim"
           }
-
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
+      #
+      # - name: Setup tmate session
+      #   uses: mxschmitt/action-tmate@v3
 
 
       - name: Run tests
