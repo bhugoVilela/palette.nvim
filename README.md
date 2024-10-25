@@ -1,5 +1,7 @@
-# Palette.nvim
-### Modify and create new color schemes on the fly
+<p align="center">
+<h2 align="center">Palette.nvim</h2>
+</p>
+<p align="center">Modify `:highlight` and create new color schemes on the fly</p>
 
 **Palette.nvim** allows you to modify and create new color schemes with ease.
 Modify `:highlight` directly and preview your tweaks in real-time with the 
