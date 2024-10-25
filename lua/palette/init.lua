@@ -127,7 +127,10 @@ local function update_highlights(highlights)
     local suc = pcall(vim.api.nvim_set_hl, 0, name, value)
     if (not suc) then
       print('failed on: '..name..', '..vim.inspect(value))
+      print('A1')
       vim.cmd("hi "..name)
+      print('A2')
+      vim.cmd("hi Normal")
       error("FAILED to call set_hl")
     end
   end
