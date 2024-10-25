@@ -50,4 +50,9 @@ With <a href="https://github.com/junegunn/vim-plug">junegunn/vim-plug</a>
 Plug 'bhugovilela/mini.nvim'
 ```
 
+### Creating a colorscheme
+[This presentation](https://speakerdeck.com/cocopon/creating-your-lovely-color-scheme) 
+by Hiroki Kokubun is a good introduction to highlights and how they work.
 
+<!-- vim: colorcolumn=80 tw=80 
+-->
