@@ -19,7 +19,7 @@ describe(":Palette new", function()
 			vim.cmd [[redir END]]
 
 			local highlight = vim.g.test_hi:match('%s+- (%S+)')
-			assert.equals(highlight, "ErrorMsg")
+			assert.equals("ErrorMsg", highlight)
 		end)
 
 		describe("update an highlight", function()
