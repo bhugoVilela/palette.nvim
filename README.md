@@ -3,6 +3,8 @@
 </p>
 <p align="center">Modify `:highlight` and create new color schemes on the fly</p>
 
+![main](https://github.com/bhugoVilela/palette.nvim/actions/workflows/tests.yml/badge.svg?branch=main)
+
 **Palette.nvim** allows you to modify and create new color schemes with ease.
 Modify `:highlight` directly and preview your tweaks in real-time with the 
 `:Palette new` command. Once Satisfied, export your scheme effortlessly via 
