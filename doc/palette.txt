@@ -1,0 +1,56 @@
+*palette.nvim*	Colorscheme editor
+
+MIT License Copyright (c) 2024 Hugo Vilela
+
+==============================================================================
+
+|palette.nvim| is a colorscheme editor that allows you to modify `:highlight`
+directly, preview changes in realtime and export a new colorscheme.
+
+# Setup ~
+This plugin is lazy by default, it will only load the code when either:
+* A buffer with filetype=palette-nvim is opened
+* The |:Palette| command is called
+
+Currently, it offers no customization options
+
+------------------------------------------------------------------------------
+                                                                    *:Palette*
+# :Palette ~
+
+|:Palette| is the only command exported by |palette.nvim| and offers two 
+subcommands:
+
+* |palette-new| opens the |palette-editor| with all current highlights.
+(`:Palette new`)
+* |palette-export| exports the current |palette-file| as a colorscheme.
+(`:Palette export [theme-name?]`)
+                                                                 *palette-new*
+# :Palette new ~
+Opens the palette editor in the current window. (See |palette-editor|).
+                                                              *palette-export*
+# :Palette export ~
+Can only be called from a |palette-file|.
+Exports the current file into a colorscheme saved in 
+`<path_to_config>/colors/<theme_name>.lua`
+
+------------------------------------------------------------------------------
+                                                                *palette-file*
+															  *palette-editor*
+# Palette File ~
+A palette file is created with `:Pallete new` (|:Palette-new|)
+It has `filetype=palette-nvim` and its contents are the output of `:highlight`
+
+It can be editted directly and changes will be visible on `:w` (|BufWrite|),
+the file is tipically created in the OS tmp dir, but can be saved and opened
+elsewhere.
+
+The file can be exported to a colorscheme with `:Palette export [name?]` 
+(|palette-export|). After which will be available with |:colorscheme|
+
+The first line is typically the |modeline|.
+It can optionally have a line to define the name of the colorscheme to export
+(ie. `-- Theme: <theme_name>`).
+
+
+vim:tw=78:ts=8:noet:ft=help:norl:
