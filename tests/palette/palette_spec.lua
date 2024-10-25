@@ -16,7 +16,7 @@ describe(":Palette new", function()
 			vim.cmd [[silent! execute "norm /^ErrorMsg\<CR>"]]
 
 			vim.cmd [[redir => g:test_hi]]
-			vim.cmd [[silent! Inspect]]
+			vim.cmd [[Inspect]]
 			vim.cmd [[redir END]]
 
 			local highlight = vim.g.test_hi:match('%s+- (%S+)')
