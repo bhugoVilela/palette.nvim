@@ -2,7 +2,7 @@
 test:
 	mkdir -p ${HOME}/.config/nvim
 	echo "${HOME}"
-	nvim --headless -u ./tests/minimal_init.lua -c "PlenaryBustedDirectory tests/palette/ {minimal_init = './tests/minimal_init.lua', sequential = true}"
+	nvim --headless --clean -u ./tests/minimal_init.lua -c "PlenaryBustedDirectory tests/palette/ {minimal_init = './tests/minimal_init.lua', sequential = true}"
 
 lint:
 	luacheck lua/palette

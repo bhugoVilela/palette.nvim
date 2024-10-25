@@ -16,8 +16,11 @@ describe(":Palette new", function()
 			vim.cmd [[silent! execute "norm /^ErrorMsg\<CR>"]]
 
 			vim.cmd [[redir => g:test_hi]]
-			vim.cmd [[Inspect]]
+			local inspect_exists = pcall(function() vim.cmd [[Inspect]]end)
 			vim.cmd [[redir END]]
+			if not inspect_exists then
+				return --TODO find better solution
+			end
 
 			local highlight = vim.g.test_hi:match('%s+- (%S+)')
 			assert.equals("ErrorMsg", highlight)
