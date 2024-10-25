@@ -19,9 +19,15 @@ available in `:colorscheme <name>`
 - **Effortless Sharing**: Generated color schemes are single-file, ensuring 
 easy sharing. They are stored at 
 `vim.fn.stdpath('config')/colors/theme_name.lua`.
+- **Instant Plugin**: Export your theme as plugin with `:Palette exportAsPlugin`.
+A plugin folder will be created ready to be committed and pushed into github.
 - **Lazy by default**: The code is only loaded the first time you call `:Palette new`
 or open a buffer with `ft=palette-nvim`
 - **Comprehensive Help**: Access detailed help files with `:help palette.nvim`.
+
+
+https://github.com/user-attachments/assets/affbeb0d-d6a6-4915-bc41-3292db6bce5d
+
 
 ### Design Decisions
 **Palette.nvim** is designed to be small, lightweight, and efficient. The 
