@@ -1,0 +1,5 @@
+:Palette	palette.txt	/*:Palette*
+palette-export	palette.txt	/*palette-export*
+palette-file	palette.txt	/*palette-file*
+palette-new	palette.txt	/*palette-new*
+palette.nvim	palette.txt	/*palette.nvim*
