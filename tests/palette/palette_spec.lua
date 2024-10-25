@@ -3,6 +3,7 @@ require('palette')
 
 describe(":Palette new", function()
 	it("opens the editor", function()
+		vim.cmd [[colorscheme blue]]
 		vim.cmd [[Palette new]]
 		local filetype = vim.bo.filetype
 		assert.equals(filetype, 'palette-nvim')
