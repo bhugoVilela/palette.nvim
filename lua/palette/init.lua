@@ -124,7 +124,11 @@ local function update_highlights(highlights)
     highlights, _, _ = parse_highlights()
   end
   for name, value in pairs(highlights) do
-    vim.api.nvim_set_hl(0, name, value)
+    local suc = pcall(vim.api.nvim_set_hl, 0, name, value)
+    if (not suc) then
+      print('failed on: '..name..', '..vim.inspect(value))
+      error("FAILED to call set_hl")
+    end
   end
 end
 
