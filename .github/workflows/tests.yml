@@ -1,5 +1,5 @@
 # Shamelesly plugged from nvim-lua/plenary.nvim
-name: default
+name: tests
 on: [push, pull_request]
 
 jobs:
