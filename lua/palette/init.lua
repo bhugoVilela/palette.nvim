@@ -163,7 +163,11 @@ end
 local function create_color_dir()
   local uv = vim.loop
   local path = getPluginConfig().export_path
-  local _, _, suc = uv.fs_mkdir(path, 511)
+  local _, err, msg = uv.fs_mkdir(path, 511)
+  if err then
+    print(err..' '..msg)
+    error(msg)
+  end
 end
 
 --- exports the current palette buffer into a colorscheme
@@ -193,7 +197,11 @@ local function create_color_theme(bufnr, theme_name_overwrite)
 
   local theme_path = config.export_path .. '/' .. theme_name .. '.lua'
 
-  local fd = uv.fs_open(theme_path, 'w+', 511)
+  local fd, err, msg = uv.fs_open(theme_path, 'w+', 511)
+  if fd == nil then
+    print(err..' '..msg)
+    error(msg)
+  end
 
   uv.fs_write(fd, content)
   uv.fs_close(fd)
@@ -204,14 +212,12 @@ local function cmdPaletteNew()
   local tmpdir, err, msg = uv.os_tmpdir()
   if err then
     error('failed to locate tmpdir' .. msg)
-    return
   end
 
   local tmp_file_path = tmpdir .. '/tmp.palettenvim'
   local fd = uv.fs_open(tmp_file_path, 'w+', 511)
   if not fd then
     error('failed to create tmpfile')
-    return
   end
 
   uv.fs_write(fd, {
@@ -301,7 +307,6 @@ function M.palette_user_command(opts)
 
     if vim.bo.filetype ~= palette_filetype then
       error('Palette export can only be called from a palette file. Use "Palette new" to start a new palette')
-      return
     end
 
     create_color_dir()
