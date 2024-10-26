@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
-# nvim --headless -c "PlenaryBustedDirectory tests/palette {minimal_init = './tests/minimal_init.lua'}"
-nvim --headless --clean -u ./tests/minimal_init.lua -c "PlenaryBustedDirectory tests/palette/ {minimal_init = './tests/minimal_init.lua', sequential = true}"
-# nvim -c "PlenaryBustedDirectory tests/palette {minimal_init = './tests/minimal_init.lua'}"
+if [ -z NVIM ]; then
+	NVIM=nvim
+fi
 
-
+$NVIM --headless --clean -u ./tests/minimal_init.lua -c "PlenaryBustedDirectory tests/palette/ {minimal_init = './tests/minimal_init.lua', sequential = true}"
+# $NVIM --clean -u ./tests/minimal_init.lua -c "PlenaryBustedDirectory tests/palette/ {minimal_init = './tests/minimal_init.lua', sequential = true}"
