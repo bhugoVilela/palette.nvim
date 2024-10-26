@@ -100,15 +100,14 @@ local function parse_highlights()
           properties[key] = new_value
         elseif (key == 'include' or key == '+') then
           for import_name in (value or ''):gmatch('([^,]+),*') do
+            if highlights[import_name] == nil then
+              error('ERROR: on highlight '..hl_name..' @ include='..import_name..'. Highlight not found. Make sure it\'s been declared before')
+            end
             local props_to_include = vim.tbl_deep_extend('force', highlights[import_name] or {}, {})
             props_to_include.export = nil
 
-            if props_to_include == nil then
-              error('ERROR: on highlight '..hl_name..' @ include='..import_name..'. Highlight not found. Make sure it\'s been declared before')
-            else
               local new_props = vim.tbl_deep_extend('force', properties, props_to_include)
               properties = new_props
-            end
           end
         else
           properties[key] = value

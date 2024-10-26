@@ -15,9 +15,12 @@ This plugin is lazy by default, it will only load the code when either:
 There's no need to call `setup()`, just include the plugin in the rtp, using
 your favorite plugin manager.
 
-                                                 *g:palette_theme_export_path*
-The following options can be customized:
-• `g:palette_theme_export_path` - folder where themes will be exported to.
+                                                        *vim.g.palette_config*
+                                                            *g:palette_config*
+Configuration is done through |g:palette_config| or |vim.g.palette_config|
+which should hold a table with the following properties:
+
+• `export_path` [optional] - folder where themes will be exported to. 
   (default is <config>/colors)
 
 ------------------------------------------------------------------------------
@@ -93,21 +96,23 @@ and it must follow the following rules:
 • optionally, the next line may start with whitespace followed by 
   `links to <highlight>`. 
 • See |palette-extended-syntax| for the extra features baked into palette.
-  o
+
 ------------------------------------------------------------------------------
+
                                                      *palette-extended-syntax*
 # Extended Syntax ~
                                                            *palette-no-export*
   export=false ~
+
     The highlight won't be exported to the colorscheme. Useful with
     |palette-include|
 
     ```
     RedFg          xxx guifg=red export=false
     ```
-
                                                              *palette-include*
-  [include|+]={<other_highlight_name>,}+ ~
+  {include|+}={<other_highlight_name>,}+ ~
+
     Merges other highlight into the current one inline.
     It adds all properties missing in the current highlight, and overwrites 
     those already set. list-properties like `gui=bold,italic` get merged 
@@ -128,6 +133,7 @@ and it must follow the following rules:
 
     -- export=false is not merged
     ```
+
                                                                 *palette-link*
   link=<other_highlight> ~
     Alternative way of `links to <other_highlight_name>`
