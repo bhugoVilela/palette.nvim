@@ -1,6 +1,18 @@
 require('plenary.busted')
 require('palette')
 
+local warn = {
+	untested = function(self) self("Test assertions weren't made") end,
+	not_implemented = function(self) self("Test Not Implemented") end
+}
+
+setmetatable(warn, {
+	__call = function(_, msg)
+		print('WARN: '..msg)
+	end
+})
+
+
 describe(":Palette new", function()
 	it("opens the editor", function()
 		vim.cmd [[colorscheme blue]]
@@ -19,7 +31,8 @@ describe(":Palette new", function()
 			local inspect_exists = pcall(function() vim.cmd [[silent! Inspect]] end)
 			vim.cmd [[redir END]]
 			if not inspect_exists then
-				return --TODO find better solution
+				warn:untested()
+				return
 			end
 
 			local highlight = vim.g.test_hi:match('%s+- (%S+)')
@@ -123,6 +136,11 @@ describe("logic", function()
 		end
 		vim.cmd("write")
 
+		if not vim.api or not vim.api.nvim_get_hl then
+			warn:untested()
+			return
+		end
+
 		local hi = vim.api.nvim_get_hl(0, { name = 'TESTHI' })
 		assert.equals(hi.bg, 16711680)
 		assert.equals(hi.fg, 65280)
@@ -150,6 +168,11 @@ describe("logic", function()
 		end
 		vim.cmd("write")
 
+		if not vim.api or not vim.api.nvim_get_hl then
+			warn:untested()
+			return
+		end
+
 		local hi = vim.api.nvim_get_hl(0, { name = 'TESTHI' })
 		assert.equals(hi.ctermfg, 1)
 		assert.equals(hi.ctermbg, 2)
@@ -161,19 +184,19 @@ describe("logic", function()
 	end)
 
 	it("should error on an unknown property", function()
-		print('Warning: Not impelmented')
+		warn:not_implemented()
 	end)
 
 	it("should error on a malformed property", function()
-		print('Warning: Not impelmented')
+		warn:not_implemented()
 	end)
 
 	it("should error when linking to a noexport highlight", function()
-		print('Warning: Not impelmented')
+		warn:not_implemented()
 	end)
 
 	it("should error on malformed lines", function()
-		print('Warning: Not impelmented')
+		warn:not_implemented()
 	end)
 end)
 
@@ -210,3 +233,4 @@ describe(":Palette exportAsPlugin", function()
 		vim.fn.system("rm -rf ./theme_name")
 	end)
 end)
+
