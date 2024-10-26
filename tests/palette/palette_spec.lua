@@ -13,7 +13,6 @@ setmetatable(warn, {
 	end
 })
 
-
 describe(":Palette new", function()
 	it("opens the editor", function()
 		vim.cmd [[colorscheme blue]]
@@ -67,17 +66,19 @@ describe(":Palette export", function()
 	end)
 
 	it("should export a colorscheme to config/colors/theme_name.lua by default", function()
+		local filepath = vim.fn.stdpath('config') .. '/colors/' .. 'test_theme.lua'
+		vim.fn.system("rm " .. filepath)
+
 		vim.cmd "Palette export test_theme"
 
-		local filepath = vim.fn.stdpath('config') .. '/colors/' .. 'test_theme.lua'
 		local fileExists = vim.fn.filereadable(filepath) == 1
 		assert.equals(fileExists, true)
 
 		vim.fn.system("rm " .. filepath)
 	end)
 
-	it("should export a colorscheme to expand(g:palette_theme_export_path) if set", function()
-		vim.g.palette_theme_export_path = './colors'
+	it("should export a colorscheme to expand(g:palette_config.export_path) if set", function()
+		vim.g.palette_config = { export_path = './colors' }
 		vim.cmd "Palette export test_theme"
 
 		local filepath = vim.fn.expand("./colors/test_theme.lua")

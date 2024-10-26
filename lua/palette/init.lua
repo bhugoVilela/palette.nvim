@@ -1,18 +1,10 @@
+local parse_config = require('palette.config').parse_config
+
 local palette_filetype = 'palette-nvim'
 local palette_file_extension = 'palettenvim'
 local palette_ns_id = vim.api.nvim_create_namespace('palettenvim')
 
 local M = {}
-
-local function getPluginConfig() 
-  local config = {}
-  if vim.g.palette_theme_export_path then
-    config.export_path = vim.fn.expand(vim.g.palette_theme_export_path)
-  else
-    config.export_path = vim.fn.stdpath('config')..'/colors'
-  end
-  return config
-end
 
 local type_params = {
   fg = "string",
@@ -178,17 +170,18 @@ function M.on_buffer_update()
   apply_live_highlights(live_highlights)
 end
 
-local function create_color_dir()
+local function mkdir_safe(export_path)
   local uv = vim.loop
-  local path = getPluginConfig().export_path
-  local _, err, msg = uv.fs_mkdir(path, 511)
+  local _, err, msg = uv.fs_mkdir(export_path, 511)
 end
 
 --- exports the current palette buffer into a colorscheme
-local function create_color_theme(bufnr, theme_name_overwrite)
+--- @param bufnr? number the buffer from which to read the palette
+--- @param theme_name_overwrite? string a theme_name to overwrite the on declared inline
+--- @param export_path? string path to dir where the file should be saved
+local function create_color_theme(bufnr, theme_name_overwrite, export_path)
   bufnr = bufnr or 0
   local uv = vim.loop
-  local config = getPluginConfig()
 
   local highlights, _, theme_name = parse_highlights(bufnr or 0)
 
@@ -211,7 +204,7 @@ local function create_color_theme(bufnr, theme_name_overwrite)
     end
   end
 
-  local theme_path = config.export_path .. '/' .. theme_name .. '.lua'
+  local theme_path = export_path .. '/' .. theme_name .. '.lua'
 
   local fd, err, msg = uv.fs_open(theme_path, 'w+', 511)
   if fd == nil then
@@ -262,16 +255,15 @@ local function cmdPaletteExportAsPlugin(theme_name, export_path, overwrite)
     end
   end
 
-  local repo_path = vim.fn.expand(export_path)
-  if string.sub(repo_path, #repo_path, #repo_path) == '/' then
-    repo_path = string.sub(repo_path, 1, #repo_path - 1)
+  if string.sub(export_path, #export_path, #export_path) == '/' then
+    export_path = string.sub(export_path, 1, #export_path - 1)
   end
-  repo_path = repo_path..'/'..theme_name
+  export_path = export_path..'/'..theme_name
 
-  if vim.fn.isdirectory(repo_path) == 1 then
+  if vim.fn.isdirectory(export_path) == 1 then
     if overwrite ~= true then
       local res = vim.fn.input({
-        prompt = repo_path.." already exists, overwrite? (this will only overwrite the colorscheme file)(y/n): ",
+        prompt = export_path.." already exists, overwrite? (this will only overwrite the colorscheme file)(y/n): ",
         cancelreturn = 'n',
       })
       overwrite = #res == 0 or res == 'y'
@@ -283,32 +275,23 @@ local function cmdPaletteExportAsPlugin(theme_name, export_path, overwrite)
   end
 
   if not overwrite then
-    local suc, err, msg = uv.fs_mkdir(repo_path, 511)
+    local suc, err, msg = uv.fs_mkdir(export_path, 511)
     if not suc then
       error(msg)
     end
 
     local readme_content = utils.readme(theme_name)
-    vim.fn.writefile(vim.fn.split(readme_content, '\n'), repo_path..'/README.md')
+    vim.fn.writefile(vim.fn.split(readme_content, '\n'), export_path..'/README.md')
   end
 
-  -- generate colorscheme file
-  local old_export_path = vim.g.palette_theme_export_path
-  vim.g.palette_theme_export_path = repo_path..'/colors'
-  create_color_dir()
-  create_color_theme(0, theme_name)
-  vim.g.palette_theme_export_path = old_export_path
+  mkdir_safe(export_path..'/colors')
+  create_color_theme(0, theme_name, export_path..'/colors')
 end
-
-function CmdPaletteExportAsPlugin()
-  cmdPaletteExportAsPlugin("test_theme")
-end
-
-
 
 function M.palette_user_command(opts)
   args = opts.fargs
   nargs = #opts.fargs
+  local config = parse_config()
 
   local cmd = args[1]:lower()
   if cmd == 'export' then
@@ -325,8 +308,8 @@ function M.palette_user_command(opts)
       error('Palette export can only be called from a palette file. Use "Palette new" to start a new palette')
     end
 
-    create_color_dir()
-    create_color_theme(0, theme_name)
+    mkdir_safe(config.export_path)
+    create_color_theme(0, theme_name, config.export_path)
   elseif cmd == 'new' then
     if nargs > 1 then
       print('Palette new called with more than two arguments, ignoring extra arguments')
@@ -335,13 +318,13 @@ function M.palette_user_command(opts)
     cmdPaletteNew()
   elseif cmd == 'exportasplugin' then
     local theme_name = nil
-    local export_path = nil
+    local export_path = config.export_path
 
     if nargs > 1 then
       theme_name = args[2]
     end
     if nargs > 2 then
-      export_path = args[3]
+      export_path = args[3] or config.export_path
     end
 
     if not theme_name then

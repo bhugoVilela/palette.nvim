@@ -3,14 +3,6 @@ local palette_file_extension = 'palettenvim'
 
 local PaletteNvimGroup = vim.api.nvim_create_augroup("PaletteNvim", { clear = true })
 
--- vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile", "BufEnter", "BufNewFile" }, {
--- 	pattern = "*." .. palette_file_extension,
--- 	group = PaletteNvimGroup,
--- 	callback = function()
--- 		require('palette').on_buffer_update()
--- 	end
--- })
-
 vim.api.nvim_create_autocmd({ "FileType" }, {
 	pattern = palette_filetype,
 	group = PaletteNvimGroup,
