@@ -108,92 +108,92 @@ describe(":Palette export", function()
 	end)
 end)
 
--- describe("logic", function()
--- 	before_each(function()
--- 		vim.cmd [[colorscheme blue]]
--- 		vim.cmd [[Palette new]]
--- 		vim.cmd [[silent! execute "norm GO"]]
--- 		vim.cmd [[silent! execute "norm /^ErrorMsg\<CR>"]]
--- 		vim.cmd [[silent! execute "norm /guibg\<CR>"]]
--- 		vim.cmd [[silent! execute "norm f#lce0000ff"]]
--- 		vim.cmd [[write]]
--- 	end)
---
--- 	it("should add all declared properties correctly", function()
--- 		local highlights = {
--- 			TESTHI = 'guibg=red guifg=#00ff00 ctermfg=1 ctermbg=2 gui=bold,nocombine cterm=italic',
--- 			TESTHI2 = 'fg=#0000ff bg=#00ff00 export=false ctermbg=2',
--- 		}
---
--- 		for name, value in pairs(highlights) do
--- 			local cmd = "norm Go" .. name .. ' xxx ' .. value .. "\\<esc>"
--- 			vim.cmd("execute " .. '"' .. cmd .. '"')
--- 		end
--- 		vim.cmd("write")
---
--- 		if not vim.api or not vim.api.nvim_get_hl then
--- 			warn:untested()
--- 			return
--- 		end
---
--- 		local hi = vim.api.nvim_get_hl(0, { name = 'TESTHI' })
--- 		assert.equals(hi.bg, 16711680)
--- 		assert.equals(hi.fg, 65280)
--- 		assert.equals(hi.ctermfg, 1)
--- 		assert.equals(hi.ctermbg, 2)
--- 		assert.equals(hi.cterm.italic, true)
--- 		assert.equals(hi.nocombine, true)
---
--- 		local hi2 = vim.api.nvim_get_hl(0, { name = 'TESTHI2' })
--- 		assert.equals(hi2.bg, 65280)
--- 		assert.equals(hi2.fg, 255)
--- 		assert.equals(hi2.export, nil)
--- 	end)
---
--- 	it('include should include another highlight properties', function()
--- 		local highlights = {
--- 			{ name = 'TESTINC', value = 'ctermfg=1 ctermbg=2 gui=bold cterm=italic' },
--- 			{ name = 'TESTINC2', value = 'gui=nocombine' },
--- 			{ name = 'TESTHI',  value = 'ctermfg=3 gui=italic +=TESTINC,TESTINC2 cterm=bold'}
--- 		}
---
--- 		for idx, hi in ipairs(highlights) do
--- 			local cmd = "norm Go" .. hi.name .. ' xxx ' .. hi.value .. "\\<esc>"
--- 			vim.cmd("execute " .. '"' .. cmd .. '"')
--- 		end
--- 		vim.cmd("write")
---
--- 		if not vim.api or not vim.api.nvim_get_hl then
--- 			warn:untested()
--- 			return
--- 		end
---
--- 		local hi = vim.api.nvim_get_hl(0, { name = 'TESTHI' })
--- 		assert.equals(hi.ctermfg, 1)
--- 		assert.equals(hi.ctermbg, 2)
--- 		assert.equals(hi.bold, true)
--- 		assert.equals(hi.nocombine, true)
--- 		assert.equals(hi.italic, true)
--- 		assert.equals(hi.cterm.italic, true)
--- 		assert.equals(hi.cterm.bold, true)
--- 	end)
---
--- 	it("should error on an unknown property", function()
--- 		warn:not_implemented()
--- 	end)
---
--- 	it("should error on a malformed property", function()
--- 		warn:not_implemented()
--- 	end)
---
--- 	it("should error when linking to a noexport highlight", function()
--- 		warn:not_implemented()
--- 	end)
---
--- 	it("should error on malformed lines", function()
--- 		warn:not_implemented()
--- 	end)
--- end)
+describe("logic", function()
+	before_each(function()
+		vim.cmd [[colorscheme blue]]
+		vim.cmd [[Palette new]]
+		vim.cmd [[silent! execute "norm GO"]]
+		vim.cmd [[silent! execute "norm /^ErrorMsg\<CR>"]]
+		vim.cmd [[silent! execute "norm /guibg\<CR>"]]
+		vim.cmd [[silent! execute "norm f#lce0000ff"]]
+		vim.cmd [[write]]
+	end)
+
+	it("should add all declared properties correctly", function()
+		local highlights = {
+			TESTHI = 'guibg=red guifg=#00ff00 ctermfg=1 ctermbg=2 gui=bold,nocombine cterm=italic',
+			TESTHI2 = 'fg=#0000ff bg=#00ff00 export=false ctermbg=2',
+		}
+
+		for name, value in pairs(highlights) do
+			local cmd = "norm Go" .. name .. ' xxx ' .. value .. "\\<esc>"
+			vim.cmd("execute " .. '"' .. cmd .. '"')
+		end
+		vim.cmd("write")
+
+		if not vim.api or not vim.api.nvim_get_hl then
+			warn:untested()
+			return
+		end
+
+		local hi = vim.api.nvim_get_hl(0, { name = 'TESTHI' })
+		assert.equals(hi.bg, 16711680)
+		assert.equals(hi.fg, 65280)
+		assert.equals(hi.ctermfg, 1)
+		assert.equals(hi.ctermbg, 2)
+		assert.equals(hi.cterm.italic, true)
+		assert.equals(hi.nocombine, true)
+
+		local hi2 = vim.api.nvim_get_hl(0, { name = 'TESTHI2' })
+		assert.equals(hi2.bg, 65280)
+		assert.equals(hi2.fg, 255)
+		assert.equals(hi2.export, nil)
+	end)
+
+	it('include should include another highlight properties', function()
+		local highlights = {
+			{ name = 'TESTINC', value = 'ctermfg=1 ctermbg=2 gui=bold cterm=italic' },
+			{ name = 'TESTINC2', value = 'gui=nocombine' },
+			{ name = 'TESTHI',  value = 'ctermfg=3 gui=italic +=TESTINC,TESTINC2 cterm=bold'}
+		}
+
+		for idx, hi in ipairs(highlights) do
+			local cmd = "norm Go" .. hi.name .. ' xxx ' .. hi.value .. "\\<esc>"
+			vim.cmd("execute " .. '"' .. cmd .. '"')
+		end
+		vim.cmd("write")
+
+		if not vim.api or not vim.api.nvim_get_hl then
+			warn:untested()
+			return
+		end
+
+		local hi = vim.api.nvim_get_hl(0, { name = 'TESTHI' })
+		assert.equals(hi.ctermfg, 1)
+		assert.equals(hi.ctermbg, 2)
+		assert.equals(hi.bold, true)
+		assert.equals(hi.nocombine, true)
+		assert.equals(hi.italic, true)
+		assert.equals(hi.cterm.italic, true)
+		assert.equals(hi.cterm.bold, true)
+	end)
+
+	it("should error on an unknown property", function()
+		warn:not_implemented()
+	end)
+
+	it("should error on a malformed property", function()
+		warn:not_implemented()
+	end)
+
+	it("should error when linking to a noexport highlight", function()
+		warn:not_implemented()
+	end)
+
+	it("should error on malformed lines", function()
+		warn:not_implemented()
+	end)
+end)
 
 describe(":Palette exportAsPlugin", function()
 	before_each(function()
