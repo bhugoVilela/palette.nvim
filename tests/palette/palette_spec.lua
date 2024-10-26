@@ -105,7 +105,7 @@ describe(":Palette export", function()
 		vim.cmd [[redir END]]
 
 		if not vim.api or not vim.api.nvim_get_hl then
-			warn.untested()
+			warn:untested()
 			return
 		end
 
