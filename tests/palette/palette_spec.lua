@@ -104,6 +104,11 @@ describe(":Palette export", function()
 		vim.cmd [[silent! hi ErrorMsg]]
 		vim.cmd [[redir END]]
 
+		if not vim.api or not vim.api.nvim_get_hl then
+			warn.untested()
+			return
+		end
+
 		local res = vim.api.nvim_get_hl(0, { name = 'TESTHI' })
 		assert.equals(res[1], nil)
 	end)
