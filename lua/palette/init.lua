@@ -34,6 +34,7 @@ local type_params = {
   ctermfg = "string",
   ctermbg = "string",
   cterm = "string",
+  export = "boolean"
 }
 
 --- The table of highlight params, (see :h nvim_set_hl()) for the list of params
@@ -79,7 +80,7 @@ local function parse_highlights()
         properties.link = linkTo
       end
 
-      for key, value in hl_definition:gmatch('(%a+)=([%w#]+)') do
+      for key, value in hl_definition:gmatch('(%S+)=([%S#]+)') do
         if key == 'guifg' then
           key = 'fg'
         elseif key == 'guibg' then
@@ -100,18 +101,31 @@ local function parse_highlights()
             properties[subvalue] = true
           end
         elseif (key == 'cterm') then
-          new_value = {}
+          new_value = properties.cterm or {}
           for subvalue in (value or ''):gmatch('([^,]+),*') do
             new_value[subvalue] = true
           end
           properties[key] = new_value
+        elseif (key == 'include' or key == '+') then
+          for import_name in (value or ''):gmatch('([^,]+),*') do
+            local props_to_include = vim.tbl_deep_extend('force', highlights[import_name] or {}, {})
+            props_to_include.export = nil
+
+            if props_to_include == nil then
+              error('ERROR: on highlight '..hl_name..' @ include='..import_name..'. Highlight not found. Make sure it\'s been declared before')
+            else
+              local new_props = vim.tbl_deep_extend('force', properties, props_to_include)
+              properties = new_props
+            end
+          end
         else
           properties[key] = value
         end
       end
 
       highlights[hl_name] = properties
-      table.insert(live_highlights, { 0, palette_ns_id, hl_name, line_nr - 1, 0, #hl_name })
+      local xIdx = line:find('xxx') - 1
+      table.insert(live_highlights, { 0, palette_ns_id, hl_name, line_nr - 1, xIdx, xIdx+3 })
     end
     ::continue::
   end
@@ -124,6 +138,7 @@ local function update_highlights(highlights)
     highlights, _, _ = parse_highlights()
   end
   for name, value in pairs(highlights) do
+    value.export = nil
     local suc = pcall(vim.api.nvim_set_hl, 0, name, value)
     if (not suc) then
       error("FAILED to set highlight "..name)
@@ -190,8 +205,10 @@ local function create_color_theme(bufnr, theme_name_overwrite)
   content = content .. '\n' .. 'vim.g.colors_name = "' .. theme_name .. '"'
 
   for name, value in pairs(highlights) do
-    local line = 'vim.api.nvim_set_hl(ns_id, "' .. name .. '", ' .. vim.inspect(value) .. ')'
-    content = content .. '\n' .. line
+    if value.export ~= false then
+      local line = 'vim.api.nvim_set_hl(ns_id, "' .. name .. '", ' .. vim.inspect(value) .. ')'
+      content = content .. '\n' .. line
+    end
   end
 
   local theme_path = config.export_path .. '/' .. theme_name .. '.lua'

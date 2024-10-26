@@ -91,6 +91,50 @@ and it must follow the following rules:
   |highlight-args| plus any parameters listed in |nvim_set_hl|
 • the parameter-list may instead be `links to <highlight>`
 • optionally, the next line may start with whitespace followed by 
-  `links to <highlight>`. Alternatively you can use the link=<highlight_name>
+  `links to <highlight>`. 
+• See |palette-extended-syntax| for the extra features baked into palette.
+  o
+------------------------------------------------------------------------------
+                                                     *palette-extended-syntax*
+# Extended Syntax ~
+                                                           *palette-no-export*
+  export=false ~
+    The highlight won't be exported to the colorscheme. Useful with
+    |palette-include|
+
+    ```
+    RedFg          xxx guifg=red export=false
+    ```
+
+                                                             *palette-include*
+  [include|+]={<other_highlight_name>,}+ ~
+    Merges other highlight into the current one inline.
+    It adds all properties missing in the current highlight, and overwrites 
+    those already set. list-properties like `gui=bold,italic` get merged 
+    deeply. The position where the include is put matters as it will only 
+    overwrite properties defined before.
+
+    An include property can only refer to highlights already defined. 
+
+    Example:
+    ```
+    RedFg  xxx export=false fg=red gui=italic
+    BlueBg xxx export=false bg=blue
+
+    HI1 xxx fg=green +=RedFg,BlueBg gui=bold
+
+    -- HI1 will be defined as: 
+    HI1 xxx fg=red bg=BlueBg gui=bold,italic
+
+    -- export=false is not merged
+    ```
+                                                                *palette-link*
+  link=<other_highlight> ~
+    Alternative way of `links to <other_highlight_name>`
+    ```
+    NormalNC  xxx link=Normal
+    ```
+
 
 vim:tw=78:ts=8:noet:ft=help:norl:
+

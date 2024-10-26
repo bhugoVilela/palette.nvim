@@ -15,6 +15,9 @@ Modify `:highlight` directly and preview your tweaks in real-time with the
 your preferences (`:Palette new`).
 - **Instant Feedback**: Real-time preview of color changes with automatic 
 updates on file save (`BufWrite`).
+- **Powerful**: Features like `palette-no-export` and `palette-include` extend
+the highlights syntax in powerful ways to make creating colorschemes a breeze.
+`:h palette-extended-syntax`
 - **Simple Export**: Generate and export your customized color schemes with a 
 single command (`:Palette export [name?]`). Once exported, your theme will be 
 available in `:colorscheme <name>`

@@ -13,10 +13,10 @@ describe(":Palette new", function()
 		it("has highlights", function()
 			vim.cmd "colorscheme blue"
 			vim.cmd [[Palette new]]
-			vim.cmd [[silent! execute "norm /^ErrorMsg\<CR>"]]
+			vim.cmd [[silent! execute "norm /^ErrorMsg\<CR>fx"]]
 
 			vim.cmd [[redir => g:test_hi]]
-			local inspect_exists = pcall(function() vim.cmd [[Inspect]]end)
+			local inspect_exists = pcall(function() vim.cmd [[silent! Inspect]] end)
 			vim.cmd [[redir END]]
 			if not inspect_exists then
 				return --TODO find better solution
@@ -53,17 +53,18 @@ describe(":Palette export", function()
 		vim.cmd [[silent! execute "norm /^ErrorMsg\<CR>"]]
 		vim.cmd [[silent! execute "norm /guibg\<CR>"]]
 		vim.cmd [[silent! execute "norm f#lce0000ff"]]
+		vim.cmd [[silent! execute "norm GoTESTHI xxx export=false guifg=red\<esc>"]]
 		vim.cmd [[write]]
 	end)
 
 	it("should export a colorscheme to config/colors/theme_name.lua by default", function()
 		vim.cmd "Palette export test_theme"
 
-		local filepath = vim.fn.stdpath('config')..'/colors/'..'test_theme.lua'
+		local filepath = vim.fn.stdpath('config') .. '/colors/' .. 'test_theme.lua'
 		local fileExists = vim.fn.filereadable(filepath) == 1
 		assert.equals(fileExists, true)
 
-		vim.fn.system("rm "..filepath)
+		vim.fn.system("rm " .. filepath)
 	end)
 
 	it("should export a colorscheme to expand(g:palette_theme_export_path) if set", function()
@@ -83,6 +84,96 @@ describe(":Palette export", function()
 		vim.cmd "colorscheme test_theme"
 
 		assert.equals(vim.g.colors_name, "test_theme")
+	end)
+
+	it("should not export a color with export=false", function()
+		vim.cmd "Palette export test_theme"
+		vim.cmd ":hi clear"
+		vim.cmd "colorscheme test_theme"
+
+		vim.cmd [[redir => g:res]]
+		vim.cmd [[silent! hi ErrorMsg]]
+		vim.cmd [[redir END]]
+
+		local res = vim.api.nvim_get_hl(0, { name = 'TESTHI' })
+		assert.equals(res[1], nil)
+	end)
+end)
+
+describe("logic", function()
+	before_each(function()
+		vim.cmd [[colorscheme blue]]
+		vim.cmd [[Palette new]]
+		vim.cmd [[silent! execute "norm GO"]]
+		vim.cmd [[silent! execute "norm /^ErrorMsg\<CR>"]]
+		vim.cmd [[silent! execute "norm /guibg\<CR>"]]
+		vim.cmd [[silent! execute "norm f#lce0000ff"]]
+		vim.cmd [[write]]
+	end)
+
+	it("should add all declared properties correctly", function()
+		local highlights = {
+			TESTHI = 'guibg=red guifg=#00ff00 ctermfg=1 ctermbg=2 gui=bold,nocombine cterm=italic',
+			TESTHI2 = 'fg=#0000ff bg=#00ff00 export=false ctermbg=2',
+		}
+
+		for name, value in pairs(highlights) do
+			local cmd = "norm Go" .. name .. ' xxx ' .. value .. "\\<esc>"
+			vim.cmd("execute " .. '"' .. cmd .. '"')
+		end
+		vim.cmd("write")
+
+		local hi = vim.api.nvim_get_hl(0, { name = 'TESTHI' })
+		assert.equals(hi.bg, 16711680)
+		assert.equals(hi.fg, 65280)
+		assert.equals(hi.ctermfg, 1)
+		assert.equals(hi.ctermbg, 2)
+		assert.equals(hi.cterm.italic, true)
+		assert.equals(hi.nocombine, true)
+
+		local hi2 = vim.api.nvim_get_hl(0, { name = 'TESTHI2' })
+		assert.equals(hi2.bg, 65280)
+		assert.equals(hi2.fg, 255)
+		assert.equals(hi2.export, nil)
+	end)
+
+	it('include should include another highlight properties', function()
+		local highlights = {
+			{ name = 'TESTINC', value = 'ctermfg=1 ctermbg=2 gui=bold cterm=italic' },
+			{ name = 'TESTINC2', value = 'gui=nocombine' },
+			{ name = 'TESTHI',  value = 'ctermfg=3 gui=italic +=TESTINC,TESTINC2 cterm=bold'}
+		}
+
+		for idx, hi in ipairs(highlights) do
+			local cmd = "norm Go" .. hi.name .. ' xxx ' .. hi.value .. "\\<esc>"
+			vim.cmd("execute " .. '"' .. cmd .. '"')
+		end
+		vim.cmd("write")
+
+		local hi = vim.api.nvim_get_hl(0, { name = 'TESTHI' })
+		assert.equals(hi.ctermfg, 1)
+		assert.equals(hi.ctermbg, 2)
+		assert.equals(hi.bold, true)
+		assert.equals(hi.nocombine, true)
+		assert.equals(hi.italic, true)
+		assert.equals(hi.cterm.italic, true)
+		assert.equals(hi.cterm.bold, true)
+	end)
+
+	it("should error on an unknown property", function()
+		print('Warning: Not impelmented')
+	end)
+
+	it("should error on a malformed property", function()
+		print('Warning: Not impelmented')
+	end)
+
+	it("should error when linking to a noexport highlight", function()
+		print('Warning: Not impelmented')
+	end)
+
+	it("should error on malformed lines", function()
+		print('Warning: Not impelmented')
 	end)
 end)
 
