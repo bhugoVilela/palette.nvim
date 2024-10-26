@@ -27,6 +27,11 @@ describe(":Palette new", function()
 			vim.cmd [[Palette new]]
 			vim.cmd [[silent! execute "norm /^ErrorMsg\<CR>fx"]]
 
+			if not vim.cmd.Inspect then
+				warn:untested()
+				return
+			end
+
 			local pos = vim.fn.getpos('.')
 			local ns = vim.api.nvim_get_namespaces()['palettenvim']
 			local exts = vim.api.nvim_buf_get_extmarks(0, ns, {pos[2]-1, pos[3]-1}, {pos[2]-1, pos[3]-1}, { hl_name = true, details=true })
