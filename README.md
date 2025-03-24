@@ -31,9 +31,7 @@ A plugin folder will be created ready to be committed and pushed into github.
 or open a buffer with `ft=palette-nvim`
 - **Comprehensive Help**: Access detailed help files with `:help palette.nvim`.
 
-
-https://github.com/user-attachments/assets/affbeb0d-d6a6-4915-bc41-3292db6bce5d
-
+https://github.com/user-attachments/assets/92cb9527-fa1f-4836-a3ce-c32dda8356bc
 
 ### Design Decisions
 **Palette.nvim** is a hobby plugin, I just wanted to tweak slightly some of the
