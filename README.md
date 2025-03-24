@@ -1,5 +1,5 @@
-![palette.nvim icon](/icon.png)
 <p align="center">
+<img src="/icon.png" width="150"/>
 <h2 align="center">Palette.nvim</h2>
 </p>
 <p align="center">Modify `:highlight` and create new color schemes on the fly</p>
