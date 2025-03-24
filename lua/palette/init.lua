@@ -99,11 +99,27 @@ local function parse_highlights()
           end
           properties[key] = new_value
         elseif (key == 'include' or key == '+') then
-          for import_name in (value or ''):gmatch('([^,]+),*') do
+          for import_expression in (value or ''):gmatch('([^,]+),*') do
+            local import_name, property = M.get_indexed_property(import_expression)
             if highlights[import_name] == nil then
               error('ERROR: on highlight '..hl_name..' @ include='..import_name..'. Highlight not found. Make sure it\'s been declared before')
             end
-            local props_to_include = vim.tbl_deep_extend('force', highlights[import_name] or {}, {})
+
+            local props_to_include = nil
+
+            if property then
+              if not highlights[import_name][property] then
+                error('ERROR: on highlight '..hl_name..' @ include='..import_expression..'. '..property..' not found.')
+              end
+              props_to_include = { [property] = highlights[import_name][property] }
+            else
+              props_to_include = vim.tbl_deep_extend('force', highlights[import_name] or {}, {})
+            end
+            if property then
+              print(vim.inspect(props_to_include))
+            end
+
+            -- export keyword is never imported by other hls
             props_to_include.export = nil
 
               local new_props = vim.tbl_deep_extend('force', properties, props_to_include)
@@ -121,6 +137,11 @@ local function parse_highlights()
     ::continue::
   end
   return highlights, live_highlights, theme_name
+end
+
+function M.get_indexed_property(str)
+    local matcher = string.gmatch(str, "[^.]+")
+    return matcher(), matcher()
 end
 
 ---@param highlights? Highlights a table { [highlight_name]: params} of highlights ready to be set with vim.api.nvim_set_hl
