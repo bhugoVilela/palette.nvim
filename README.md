@@ -15,9 +15,9 @@ Modify `:highlight` directly and preview your tweaks in real-time with the
 your preferences (`:Palette new`).
 - **Instant Feedback**: Real-time preview of color changes with automatic 
 updates on file save (`BufWrite`).
-- **Powerful**: Features like `:h palette-include` and `palette-no-export` 
-extend the highlights syntax in powerful ways to make creating colorschemes a 
-breeze.
+- **Powerful**: Experimental features like `:h palette-include` and 
+`palette-no-export` extend the highlights syntax in powerful ways to make 
+creating colorschemes a breeze.
 `:h palette-extended-syntax`
 - **Simple Export**: Generate and export your customized color schemes with a 
 single command (`:Palette export [name?]`). Once exported, your theme will be 
@@ -71,7 +71,11 @@ vim.g.palette_config = {
 :Palette new
 ```
 #### 2. Edit the colorscheme manually
-Tweak values and save (:w) to see changes applied automatically.
+
+(optional: Use `:InspectTree` in some other buffer to find which highlight
+groups are being used where)
+
+Tweak some highlights and save (:w) to see changes applied automatically.
 
 > [!TIP]
 > Palette.nvim extends the highlight syntax for extra flexibility.
@@ -83,6 +87,18 @@ Tweak values and save (:w) to see changes applied automatically.
 :Palette export <colorscheme_name>
 ```
 will export the colorscheme and make it available for `:colorscheme`
+
+
+### Caveats
+1. This plugin was built in a couple of afternoons, a proper version could do with
+a decent parser, I could not, however, bring myself to write a parser for such a
+small hobby plugin. I could've written a parser in treesitter but it would be
+more effort than I would like to put in this.
+
+2. The error handling isn't great because of the point above.
+
+3. The experimental features lack proper documentation. `:h palette-include` for
+   example, is equivalent to a preprocessor macro and does not replace linking.
 
 ### Further reading
 - The [help docs](docs/palette.txt) are a lot more detailed than this readme and I

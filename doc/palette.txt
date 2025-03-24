@@ -104,35 +104,50 @@ and it must follow the following rules:
                                                            *palette-no-export*
   export=false ~
 
-    The highlight won't be exported to the colorscheme. Useful with
-    |palette-include|
+    The highlight won't be exported to the colorscheme. This is useful for
+    defining constants to be included with |palette-include|
 
     ```
-    RedFg          xxx guifg=red export=false
+    PrimaryColor  xxx fg=red bg=#00ff00 export=false
     ```
+
+    PrimaryColor will be available to be referenced but won't be exported to
+    the final colorscheme.
+
                                                              *palette-include*
-  {include|+}={<other_highlight_name>,}+ ~
+  {include|+}={<other_highlight_name>[.property],}+ ~
 
     Merges other highlight into the current one inline.
-    It adds all properties missing in the current highlight, and overwrites 
-    those already set. list-properties like `gui=bold,italic` get merged 
-    deeply. The position where the include is put matters as it will only 
-    overwrite properties defined before.
-
-    An include property can only refer to highlights already defined. 
 
     Example:
     ```
-    RedFg  xxx export=false fg=red gui=italic
-    BlueBg xxx export=false bg=blue
+    -- Constants
+    PrimaryColor     xxx export=false fg=red
+    SecondaryColor   xxx export=false bg=blue
+    DefaultLinkStyle xxx gui=italic fg=cyan
 
-    HI1 xxx fg=green +=RedFg,BlueBg gui=bold
+    -- imports both primary and secondary colors and the gui property from
+    DefaultLinkStyle
+    HI1 xxx fg=green +=PrimaryColor,SecondaryColor,DefaultLinkStyle.gui gui=bold
 
     -- HI1 will be defined as: 
-    HI1 xxx fg=red bg=BlueBg gui=bold,italic
+    HI1 xxx fg=red bg=blue gui=bold,italic
 
-    -- export=false is not merged
     ```
+
+    Explanation:
+    ```
+    highlight xxx +=<otherHighlight>.<property>
+    ````
+    It adds the property from otherHighlight into the new highlight.
+    If no property is specified then all properties will be added
+
+    List-properties like `gui=bold,italic` get merged 
+    deeply. The position where the include is put matters as it will only 
+    overwrite properties defined before.
+
+    An include property can only refer to highlights defined above in the file. 
+
 
                                                                 *palette-link*
   link=<other_highlight> ~
