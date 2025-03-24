@@ -1,3 +1,4 @@
+![palette.nvim icon](/icon.png)
 <p align="center">
 <h2 align="center">Palette.nvim</h2>
 </p>
