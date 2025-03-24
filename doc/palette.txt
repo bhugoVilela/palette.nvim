@@ -1,0 +1,146 @@
+*palette.nvim*	Colorscheme editor
+
+MIT License Copyright (c) 2024 Hugo Vilela
+
+==============================================================================
+
+|palette.nvim| is a colorscheme editor that allows you to modify `:highlight`
+directly, preview changes in realtime and export a new colorscheme.
+
+# Setup ~
+This plugin is lazy by default, it will only load the code when either:
+• A buffer with filetype=palette-nvim is opened
+• The |:Palette| command is called
+
+There's no need to call `setup()`, just include the plugin in the rtp, using
+your favorite plugin manager.
+
+                                                        *vim.g.palette_config*
+                                                            *g:palette_config*
+Configuration is done through |g:palette_config| or |vim.g.palette_config|
+which should hold a table with the following properties:
+
+• `export_path` [optional] - folder where themes will be exported to. 
+  (default is <config>/colors)
+
+------------------------------------------------------------------------------
+                                                                    *:Palette*
+# :Palette ~
+
+|:Palette| is the only command exported by |palette.nvim| and offers two 
+subcommands:
+
+• |palette-new| opens the |palette-editor| with all current highlights.
+(`:Palette new`)
+• |palette-export| exports the current |palette-file| as a colorscheme.
+(`:Palette export [theme-name?]`)
+                                                                 *palette-new*
+# :Palette new ~
+Opens the palette editor in the current window. (See |palette-editor|).
+                                                              *palette-export*
+# :Palette export ~
+Can only be called from a |palette-file|.
+Exports the current file into a colorscheme saved in 
+`<path_to_config>/colors/<theme_name>.lua`
+
+                                                    *palette-export-as-plugin*
+# :Palette exportAsPlugin ~
+`:Palette[!] exportAsPlugin [name [export_path]]`
+Can only be called from a |palette-file|.
+Exports the current file as a plugin.
+
+if export_path is not provided it will prompt you for one.
+the export_path is where the plugin folder will be created.
+
+if name is not provided it will use the one in the |palette-file|
+`bang` can be used to force overwrite, if used it will only overwrite the
+color file.
+
+------------------------------------------------------------------------------
+                                                                *palette-file*
+                                                              *palette-editor*
+# Palette File ~
+A palette file is created with `:Pallete new` (|:Palette-new|)
+It has `filetype=palette-nvim` and its contents are the output of `:highlight`
+
+It can be editted directly and changes will be visible on `:w` (|BufWrite|),
+the file is tipically created in the OS tmp dir, but can be saved and opened
+elsewhere.
+
+The file can be exported to a colorscheme with `:Palette export [name?]` 
+(|palette-export|). After which will be available with |:colorscheme|
+
+The first line is typically the |modeline|.
+It can optionally have a line to define the name of the colorscheme to export
+(ie. `-- Theme: <theme_name>`).
+
+                                                       *palette-file-editting*
+# Editting a palette file ~
+The palette file starts with the |modeline|
+`-- vim: cms=--\ %s ft=palette-nvim`
+
+Followed by the theme name declaration
+`-- Theme: theme_name`
+`theme_name` can be replaced with the name you wish to give this coloscheme.
+
+Each line is a highlight:
+`ErrorMsg       xxx cterm=bold gui=bold guifg=#eb6f92`
+
+and it must follow the following rules:
+• starts with the highlight name (no preceding whitespace)
+  followed by any number of whitespaces and 'xxx' after which starts the
+  parameter-list.
+• the parameter-list is composed of serveral parameters which are listed in 
+  |highlight-args| plus any parameters listed in |nvim_set_hl|
+• the parameter-list may instead be `links to <highlight>`
+• optionally, the next line may start with whitespace followed by 
+  `links to <highlight>`. 
+• See |palette-extended-syntax| for the extra features baked into palette.
+
+------------------------------------------------------------------------------
+
+                                                     *palette-extended-syntax*
+# Extended Syntax ~
+                                                           *palette-no-export*
+  export=false ~
+
+    The highlight won't be exported to the colorscheme. Useful with
+    |palette-include|
+
+    ```
+    RedFg          xxx guifg=red export=false
+    ```
+                                                             *palette-include*
+  {include|+}={<other_highlight_name>,}+ ~
+
+    Merges other highlight into the current one inline.
+    It adds all properties missing in the current highlight, and overwrites 
+    those already set. list-properties like `gui=bold,italic` get merged 
+    deeply. The position where the include is put matters as it will only 
+    overwrite properties defined before.
+
+    An include property can only refer to highlights already defined. 
+
+    Example:
+    ```
+    RedFg  xxx export=false fg=red gui=italic
+    BlueBg xxx export=false bg=blue
+
+    HI1 xxx fg=green +=RedFg,BlueBg gui=bold
+
+    -- HI1 will be defined as: 
+    HI1 xxx fg=red bg=BlueBg gui=bold,italic
+
+    -- export=false is not merged
+    ```
+
+                                                                *palette-link*
+  link=<other_highlight> ~
+    Alternative way of `links to <other_highlight_name>`
+    ```
+    NormalNC  xxx link=Normal
+    ```
+
+
+vim:tw=78:ts=8:noet:ft=help:norl:
+

@@ -1,0 +1,3 @@
+syntax match Comment /^--.*/
+
+

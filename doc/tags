@@ -1,0 +1,14 @@
+:Palette	palette.txt	/*:Palette*
+g:palette_config	palette.txt	/*g:palette_config*
+palette-editor	palette.txt	/*palette-editor*
+palette-export	palette.txt	/*palette-export*
+palette-export-as-plugin	palette.txt	/*palette-export-as-plugin*
+palette-extended-syntax	palette.txt	/*palette-extended-syntax*
+palette-file	palette.txt	/*palette-file*
+palette-file-editting	palette.txt	/*palette-file-editting*
+palette-include	palette.txt	/*palette-include*
+palette-link	palette.txt	/*palette-link*
+palette-new	palette.txt	/*palette-new*
+palette-no-export	palette.txt	/*palette-no-export*
+palette.nvim	palette.txt	/*palette.nvim*
+vim.g.palette_config	palette.txt	/*vim.g.palette_config*
