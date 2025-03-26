@@ -309,10 +309,16 @@ end
 
 local function parse_short_assignment(cursor) 
   local a = cursor:peek()
+  if not a then
+    return nil
+  end
+
   if a and SHORT_ASSIGNMENTS[a.content] then
     return NodeShortAssignment:new(cursor:advance())
+  else
+    cursor:advance()
+    return ErrorNode:new("NodeShortAssignment", a.content.." is not a valid short property")
   end
-  return nil
 end
 
 ---@param cursor LexerCursor
@@ -328,7 +334,7 @@ local function parse_highlight(cursor)
   local preview = backup:advance()
 
   if not preview or preview.tag ~= Lexer.TOKEN_IDENTIFIER then
-    return nil
+    return NodeHighlight:new(hl_name, ErrorNode:new("Preview", "expected preview string (ie. xxx)"), {}) 
   end
 
   local properties = {}
@@ -342,6 +348,9 @@ local function parse_highlight(cursor)
     end
   end
 
+  if #properties == 0 then
+    return NodeHighlight:new(hl_name, preview, ErrorNode:new("properties", "expected properties"))
+  end
 
   -- advance cursor
   cursor:go_to(backup)
@@ -364,11 +373,33 @@ local function parse_file(cursor)
       has_more = false
     end
   end
-  return highlights[#highlights]
+  return highlights
 end
 
 m.parse_highlight = parse_highlight
 m.parse_file = parse_file
+
+--- runs a parser on lexems
+---@generic T
+---@param parser fun(cursor: LexerCursor): T
+---@param lexems Lexem[]
+---@return T, LexerCursor
+function m.run_parser(parser, lexems)
+  local cursor = LexerCursor:new(lexems)
+  local result = parser(cursor)
+  return result, cursor
+end
+
+--- runs a parser on a string
+---@generic T
+---@param parser fun(cursor: LexerCursor): T
+---@param str string
+---@return T, LexerCursor
+function m.run_parser_string(parser, str)
+  local cursor = LexerCursor:new(Lexer.runLexer(str))
+  local result = parser(cursor)
+  return result, cursor
+end
 
 -- local str = "links to red"
 -- print(vim.inspect(

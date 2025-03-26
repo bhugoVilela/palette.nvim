@@ -40,13 +40,14 @@ function m.runLexer(str)
 
   local line = 1
   local col = 1
+  local skip = 0
 
   local lexems = {}
   local lexem = nil
   local expectIndent = false
   local isComment = false
 
-  local function acceptLiteral(char, expect, tag, pos)
+  local function acceptLiteral(char, expect, tag, pos, i)
     if char == expect then
       -- insert previous lexem
       if lexem then
@@ -71,6 +72,11 @@ function m.runLexer(str)
     local c = str:sub(i,i)
     local pos = Position:new({ line = line, col = col })
 
+    if skip > 0 then
+      skip = skip - 1
+      goto continue
+    end
+
     if c == '-' and #str > i and str:sub(i+1, i+1) == '-' then
       if lexem and lexem.tag ~= m.TOKEN_INDENTATION then
         table.insert(lexems, lexem)
@@ -85,10 +91,22 @@ function m.runLexer(str)
 
     if acceptLiteral(c, '\n', m.TOKEN_NEWLINE, pos) 
       or acceptLiteral(c, '=', m.TOKEN_EQUALS, pos)
-      or acceptLiteral(c, '->', m.TOKEN_DOT, pos)
       or acceptLiteral(c, ',', m.TOKEN_COMMA, pos) then
       isComment = false
       expectIndent = c == '\n'
+    elseif c == '-' and i+1 <= #str and str:sub(i+1, i+1) == '>' then
+      -- insert previous lexem
+      if lexem then
+        table.insert(lexems, lexem)
+        lexem = nil
+      end
+      table.insert(lexems, Lexem:new({
+        start = pos,
+        finish = Position:new({ line = pos.line, col = pos.col + 1}),
+        tag = m.TOKEN_DOT,
+        content = '->'
+      }))
+      skip = skip + 1
     elseif (c == ' ' or c == '\t') then
       if lexem and lexem.tag ~= m.TOKEN_INDENTATION then
         table.insert(lexems, lexem)
