@@ -46,7 +46,7 @@ function m.runLexer(str)
   local expectIndent = false
   local isComment = false
 
-  local function acceptSingleChar(char, expect, tag, pos)
+  local function acceptLiteral(char, expect, tag, pos)
     if char == expect then
       -- insert previous lexem
       if lexem then
@@ -58,7 +58,7 @@ function m.runLexer(str)
       end
       table.insert(lexems, Lexem:new({
         start = pos,
-        finish = pos,
+        finish = Position:new({ line = pos.line, col = pos.col + #char - 1}),
         tag = tag,
         content = char
       }))
@@ -83,10 +83,10 @@ function m.runLexer(str)
       goto continue
     end
 
-    if acceptSingleChar(c, '\n', m.TOKEN_NEWLINE, pos) 
-      or acceptSingleChar(c, '=', m.TOKEN_EQUALS, pos)
-      or acceptSingleChar(c, '.', m.TOKEN_DOT, pos)
-      or acceptSingleChar(c, ',', m.TOKEN_COMMA, pos) then
+    if acceptLiteral(c, '\n', m.TOKEN_NEWLINE, pos) 
+      or acceptLiteral(c, '=', m.TOKEN_EQUALS, pos)
+      or acceptLiteral(c, '->', m.TOKEN_DOT, pos)
+      or acceptLiteral(c, ',', m.TOKEN_COMMA, pos) then
       isComment = false
       expectIndent = c == '\n'
     elseif (c == ' ' or c == '\t') then
