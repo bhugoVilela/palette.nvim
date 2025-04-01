@@ -36,12 +36,12 @@ https://github.com/user-attachments/assets/92cb9527-fa1f-4836-a3ce-c32dda8356bc
 
 ### Design Decisions
 **Palette.nvim** is a hobby plugin, I just wanted to tweak slightly some of the
-colors I found in different colorschemes. I hacked this in a couple of
+colors I found in different colorschemes. I hacked this together in a couple of
 afternoons and therefore it's very simple. Performance was an afterthought since
 this plugin shouldn't impact your workflow. That said the plugin is very lazy 
-by default only loading it's contents when the `:Palette` cmd is run.
+by default only loading its contents when the `:Palette` cmd is run.
 
-### Instalation
+### Installation
 With <a href="https://github.com/folke/lazy.nvim">folke/lazy.nvim</a>
 ```lua
 { 'bhugovilela/palette.nvim' }
@@ -54,7 +54,7 @@ add('bhugovilela/palette.nvim')
 
 With <a href="https://github.com/junegunn/vim-plug">junegunn/vim-plug</a>
 ```lua
-Plug 'bhugovilela/mini.nvim'
+Plug 'bhugovilela/palette.nvim'
 ```
 
 ### Setup
